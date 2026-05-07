@@ -1,7 +1,8 @@
 "use server"
 
-import { success, z } from "zod";
+import { z } from "zod";
 import nodemailer from "nodemailer";
+import { AzureTransport } from "@/lib/AzureTransport";
 
 const createTopicSchema = z.object({
     firstName: z
@@ -34,7 +35,7 @@ async function verifyCaptcha(token) {
 
     const res = await fetch("https://api.hcaptcha.com/siteverify", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded"},
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
             secret: process.env.HCAPTCHA_SECRET_KEY,
             response: token,
@@ -44,12 +45,12 @@ async function verifyCaptcha(token) {
 
     const data = await res.json();
 
-    if (!data.success){
+    if (!data.success) {
         console.warn("hCaptcha failed: ", data["error-codes"]);
     }
 
     return data.success === true;
-    
+
 }
 
 function escapeHtml(str) {
@@ -65,17 +66,13 @@ let transporter = null;
 
 function getTransporter() {
     if (!transporter) {
-        transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: Number(process.env.SMTP_PORT),
-            secure: true,
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-            pool: true,
-            maxConnections: 3,
-        });
+        transporter = nodemailer.createTransport(
+            new AzureTransport({
+                clientId: process.env.AZURE_CLIENT_ID,
+                clientSecret: process.env.AZURE_CLIENT_SECRET,
+                tenantId: process.env.AZURE_TENANT_ID,
+            })
+        );
     }
     return transporter;
 }
