@@ -39,7 +39,7 @@ jobs:
       - name: Assemble standalone package
         run: |
           cp -r .next/static .next/standalone/.next/static
-          cp -r public .next/standalone/public
+          cp -r public/. .next/standalone/public
 
       - name: Create tar archive
         run: tar -czf deploy.tar.gz -C .next/standalone .
