@@ -1,0 +1,80 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          CONTACT_RECEIVER_EMAIL: ${{ secrets.CONTACT_RECEIVER_EMAIL }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          NEXT_PUBLIC_HCAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_HCAPTCHA_SITE_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_MAP_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAP_ID }}
+          HCAPTCHA_SECRET_KEY: ${{ secrets.HCAPTCHA_SECRET_KEY }}
+
+      - name: Assemble standalone package
+        run: |
+          cp -r .next/static .next/standalone/.next/static
+          cp -r public .next/standalone/public
+
+      - name: Create tar archive
+        run: tar -czf deploy.tar.gz -C .next/standalone .
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.LIGHTSAIL_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Transfer archive to server
+        run: |
+          scp -i ~/.ssh/deploy_key \
+            deploy.tar.gz \
+            ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }}:/home/ubuntu/deploy.tar.gz
+
+      - name: Extract and restart on server
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }} << 'EOF'
+            set -e
+            echo "Extracting deployment..."
+            rm -rf /home/ubuntu/makarigad-tmp
+            mkdir -p /home/ubuntu/makarigad-tmp
+            tar -xzf /home/ubuntu/deploy.tar.gz -C /home/ubuntu/makarigad-tmp
+            rm /home/ubuntu/deploy.tar.gz
+
+            echo "Swapping deployment..."
+            rm -rf /home/ubuntu/makarigad
+            mv /home/ubuntu/makarigad-tmp /home/ubuntu/makarigad
+
+            echo "Restarting application..."
+            pm2 restart /home/ubuntu/ecosystem.config.js --update-env || \
+            pm2 start /home/ubuntu/ecosystem.config.js
+            pm2 save
+            echo "Deployment complete."
+          EOF
