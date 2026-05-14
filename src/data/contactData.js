@@ -4,8 +4,7 @@ export const contactInfo = [
         label: "Call Us",
         icon: "phone",
         lines: [
-            { label: "Nepal:",     item: "+977 985 127 5188" },
-            { label: "",           item: "+977 984 138 7846" },
+            { label: "Nepal:",     item: "+977 01-4720530" },
             { label: "Sri Lanka:", item: "+94 112 695 007"   },
         ],
     },

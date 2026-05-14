@@ -21,8 +21,8 @@ export default function StockSticker(){
                      <p className="text-md font-norma text-gray-600">Join us in growing together — become a shareholder and be part of our next chapter. </p>
                      <br />
                      <button 
-                     onClick={() => window.open("https://www.nepalstock.com/", "_blank")}
-                     className="justify-center gap-2 bg-linear-to-r from-sky-500 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden hover:cursor-pointer">View on NEPSE → </button>
+                     onClick={() => window.open("/prospectus/Placeholder_PDF.pdf", "_blank")}
+                     className="justify-center gap-2 bg-linear-to-r from-sky-500 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden hover:cursor-pointer">View our Prospectus → </button>
                 </div>
                 
             </div>

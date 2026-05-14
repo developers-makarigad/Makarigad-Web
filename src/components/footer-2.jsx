@@ -81,8 +81,8 @@ export function FooterWithSocialLinks() {
             <p className="text-base font-semibold">
               Telephone No
             </p>
-            <p className="text-base text-gray-600 font-normal">+977 985 127 5188</p>
-            <p className="text-base text-gray-600 font-normal">+977 984 138 7846</p>
+            
+            <p className="text-base text-gray-600 font-normal">+977 01-4720530</p>
 
             <p className="text-base font-semibold mt-2">
               Email
