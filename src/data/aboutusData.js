@@ -10,7 +10,7 @@ export const visionBanner = {
 };
 
 export const locationSection = {
-    heading: "Where We Are",
+    heading: "Where We Are ",
     body: "The Makari Gad Hydropower Project is based in Nepal, with its head office located in Maharajgunj, Ward 3, Kathmandu, Nepal. \n\nThe project sits in Makarigad village, Apihimal Rural Municipality (Ward No. 5), within the Darchula District of Sudurpaschim Province. Approximately 960 km northwest of Kathmandu, the site is accessible by road and strategically positioned for long-term operations.\n\nThis high-head, run-of-the-river hydropower project harnesses the natural flow of the Makari Gad stream, a key tributary of the Chameliya River in the Mahakali River basin. The result is clean energy generation that works with nature—not against it.",
     image: "/images/GalleryImages/p3_makariguard_20.jpg",
 };
