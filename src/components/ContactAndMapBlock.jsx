@@ -8,7 +8,6 @@ const ContactAndMapBlock = () => {
 
         <div className="grid md:grid-cols-2 gap-12 items-stretch">
             <ContactForm />
-            {/*<LtlMap  latitude={27.7172} longitude={85.3240} />*/}
             <GoogleMapBlock/>
         </div>
 
