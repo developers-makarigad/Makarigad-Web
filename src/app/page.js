@@ -17,6 +17,7 @@ export default function HomePage() {
             <div className="w-[90%] mx-auto">
                
                 <StockSticker></StockSticker>
+                {/* Test comment for redeploy */}
                 
             </div>
             </FadeIn>
